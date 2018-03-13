@@ -17,7 +17,7 @@
   static defaultProps = {
     src: 'http://placeholder.qiniudn.com/80x80',
     closeable: true,
-    elements: [ ]
+    elements: []
   };
   
 ```

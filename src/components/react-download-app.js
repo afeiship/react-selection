@@ -20,7 +20,7 @@ export default class extends PureComponent {
   static defaultProps = {
     src: 'http://placeholder.qiniudn.com/80x80',
     closeable: true,
-    elements: [ ]
+    elements: []
   };
   /*===properties end===*/
 
