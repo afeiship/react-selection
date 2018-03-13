@@ -1,5 +1,5 @@
 # react-download-app
-> Down app client bar for react.
+> Down load app bar for react.
 
 
 ## properties:
@@ -10,4 +10,13 @@ BACKUP_PROPERTIES
 ## usage:
 ```jsx
 BACKUP_USAGE
+```
+
+## customize style:
+```scss
+// customize your styles:
+$react-download-app-options:(
+);
+
+@import '~node_modules/react-download-app/style.scss';
 ```

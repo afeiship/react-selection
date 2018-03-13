@@ -1,5 +1,5 @@
 # react-download-app
-> Down app client bar for react.
+> Down load app bar for react.
 
 
 ## properties:
