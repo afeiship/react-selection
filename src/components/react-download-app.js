@@ -11,12 +11,15 @@ export default class extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     src: PropTypes.string,
+    closeable: PropTypes.bool,
     elements: PropTypes.array,
-    aside: PropTypes.element
+    aside: PropTypes.element,
+    extra: PropTypes.element
   };
 
   static defaultProps = {
     src: 'http://placeholder.qiniudn.com/80x80',
+    closeable: true,
     elements: [ ]
   };
   /*===properties end===*/
@@ -27,6 +30,8 @@ export default class extends PureComponent {
       src,
       elements,
       aside,
+      closeable,
+      extra,
       ...props
     } = this.props;
 
@@ -35,7 +40,7 @@ export default class extends PureComponent {
         {...props}
         data-role='root'
         className={classNames('webkit-sassui-flex-lmr-mauto react-download-app', className)}>
-        <img data-role='close' className="close" src={closeImg} alt=""/>
+        { closeable && <img data-role='close' className="close" src={closeImg} alt=""/> }
         <img data-role='left' className="left" src={src}/>
           {
             elements.length > 0 && (
@@ -51,9 +56,8 @@ export default class extends PureComponent {
               </div>
             )
           }
-
-
         {!aside && <button data-role='right' className="right">打开</button>}
+        { extra }
       </footer>
     );
   }

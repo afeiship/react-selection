@@ -8,12 +8,15 @@
   static propTypes = {
     className: PropTypes.string,
     src: PropTypes.string,
+    closeable: PropTypes.bool,
     elements: PropTypes.array,
-    aside: PropTypes.element
+    aside: PropTypes.element,
+    extra: PropTypes.element
   };
 
   static defaultProps = {
     src: 'http://placeholder.qiniudn.com/80x80',
+    closeable: true,
     elements: [ ]
   };
   
