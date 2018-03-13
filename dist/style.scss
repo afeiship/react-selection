@@ -2,19 +2,15 @@
 $react-download-app-options:(
   left-width: 3.6em,
   right-btn-min-widdth: 6.6em,
-  middle-hd-font-size: 1.4em,
-  middle-bd-font-size: 1.4em,
   gap: 1em,
   shadow-depth: 0.8em,
 )!default;
 
 .react-download-app {
-    $left-width: map-get($map: $left-width, $key: left-width);
+    $left-width: map-get($map: $react-download-app-options, $key: left-width);
     $right-btn-min-widdth: map-get($map: $react-download-app-options, $key: right-btn-min-widdth);
     $gap: map-get($map: $react-download-app-options, $key: gap);
     $shadow-depth: map-get($map: $react-download-app-options, $key: shadow-depth);
-    $middle-hd-font-size: map-get($map: $react-download-app-options, $key: middle-hd-font-size);
-    $middle-bd-font-size: map-get($map: $react-download-app-options, $key: middle-bd-font-size);
 
     font-size: 10px;
     box-shadow: 0 0 $shadow-depth rgba(0, 0, 0, 0.15);
@@ -27,18 +23,10 @@ $react-download-app-options:(
         width: 2.5em;
     }
     >.left {
-        width: 3.6em;
+        width: $left-width;
     }
     >.middle {
         padding: 0 1em;
-        >.hd {
-            color: #333;
-            font-size: $middle-hd-font-size;
-        }
-        >.bd {
-            color: #999;
-            font-size: $middle-bd-font-size;
-        }
     }
     >.right {
         outline: none;
@@ -48,9 +36,9 @@ $react-download-app-options:(
         padding: 0 0.8em;
         font-size: 1.2em;
         height: 2.8em;
-        line-height: $right-btn-min-widdth;
+        line-height: 2.6em;
         background-color: #f0554b;
         border: 1px solid #f0554b;
-        min-width: 6.6em;
+        min-width: $right-btn-min-widdth;;
     }
 }

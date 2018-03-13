@@ -11,10 +11,13 @@ export default class extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     src: PropTypes.string,
+    elements: PropTypes.array,
+    aside: PropTypes.element
   };
 
   static defaultProps = {
-    src: 'http://placeholder.qiniudn.com/80x80'
+    src: 'http://placeholder.qiniudn.com/80x80',
+    elements: [ ]
   };
   /*===properties end===*/
 
@@ -22,6 +25,8 @@ export default class extends PureComponent {
     const {
       className,
       src,
+      elements,
+      aside,
       ...props
     } = this.props;
 
@@ -32,11 +37,23 @@ export default class extends PureComponent {
         className={classNames('webkit-sassui-flex-lmr-mauto react-download-app', className)}>
         <img data-role='close' className="close" src={closeImg} alt=""/>
         <img data-role='left' className="left" src={src}/>
-        <div data-role='middle' className="middle">
-          <h3 data-role='middle-hd' className="hd">搜狗搜索APP-答题助手</h3>
-          <p data-role='middle-bd' className="bd">下载搜狗答题助手，帮你赢百万大奖</p>
-        </div>
-        <button data-role='right' className="right">打开</button>
+          {
+            elements.length > 0 && (
+              <div data-role='middle' className="middle">
+                {
+                  elements.map((elem,index)=>{
+                    return React.cloneElement(elem,{
+                      ...elem.props,
+                      key: index
+                    });
+                  })
+                }
+              </div>
+            )
+          }
+
+
+        {!aside && <button data-role='right' className="right">打开</button>}
       </footer>
     );
   }
