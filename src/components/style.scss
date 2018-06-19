@@ -4,6 +4,7 @@ $react-download-app-options:(
   right-btn-min-widdth: 6.6em,
   gap: 1em,
   shadow-depth: 0.8em,
+  button-color: #f0554b
 )!default;
 
 .react-download-app {
@@ -11,6 +12,7 @@ $react-download-app-options:(
     $right-btn-min-widdth: map-get($map: $react-download-app-options, $key: right-btn-min-widdth);
     $gap: map-get($map: $react-download-app-options, $key: gap);
     $shadow-depth: map-get($map: $react-download-app-options, $key: shadow-depth);
+    $button-color: map-get($map: $react-download-app-options, $key: button-color);
 
     font-size: 10px;
     box-shadow: 0 0 $shadow-depth rgba(0, 0, 0, 0.15);
@@ -37,8 +39,8 @@ $react-download-app-options:(
         font-size: 1.2em;
         height: 2.8em;
         line-height: 2.6em;
-        background-color: #f0554b;
-        border: 1px solid #f0554b;
+        background-color: $button-color;
+        border: 1px solid $button-color;
         min-width: $right-btn-min-widdth;;
     }
 }
