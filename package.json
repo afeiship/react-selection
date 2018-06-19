@@ -81,6 +81,10 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
+  "peerDependencies": {
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
+  },
   "dependencies": {
     "classnames": "^2.2.5",
     "noop": "github:afeiship/noop",
