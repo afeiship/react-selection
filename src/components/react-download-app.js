@@ -56,7 +56,7 @@ export default class extends PureComponent {
               </div>
             )
           }
-        {!aside && <button data-role='right' className="right">打开</button>}
+        {!aside && <button data-role='right' className="right">下载</button>}
         { extra }
       </footer>
     );
