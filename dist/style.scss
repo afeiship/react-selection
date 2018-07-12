@@ -18,6 +18,8 @@ $react-download-app-options:(
     box-shadow: 0 0 $shadow-depth rgba(0, 0, 0, 0.15);
     padding: $gap;
     position: relative;
+    user-select: none;
+
     >.close {
         position: absolute;
         top: -1.6em;
