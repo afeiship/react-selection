@@ -5,8 +5,14 @@ import { useState } from 'react';
 
 function App() {
   const [v1, setV1] = useState('apple');
-  const [v3, setV3] = useState('apple');
-  const [v2, setV2] = useState(['banana', 'orange']);
+  const [v2, setV2] = useState('grape');
+  const [v3, setV3] = useState(['banana', 'orange']);
+  const [json, setJson] = useState({
+    v1: 'apple',
+    v2: 'grape',
+    v3: ['banana', 'orange'],
+  });
+
   const items = [
     { value: 'apple', label: 'Apple' },
     { value: 'banana', label: 'Banana' },
@@ -20,36 +26,39 @@ function App() {
         Build Time: {BUILD_TIME}
       </div>
       <h1>react-selection</h1>
+      <div className="mockup-code">
+        <pre><code>{JSON.stringify(json)}</code></pre>
+      </div>
       <div className="y-2">
-        <h3>Single Selection</h3>
+        <h3>Single Selection(v1)</h3>
         <ReactSelection
           value={v1}
           onChange={(e) => {
             setV1(e);
-            console.log('selected value: ', e);
+            setJson({ ...json, v1: e });
           }}
           items={items}
           className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
       </div>
       <div className="y-2">
-        <h3>Single Selection + checkAble</h3>
+        <h3>Single Selection + checkAble(v2)</h3>
         <ReactSelection
           checkAble
-          value={v3}
-          onChange={(e) => {
-            setV3(e);
-            console.log('selected value: ', e);
-          }}
-          items={items}
-          className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
-      </div>
-      <div className="y-2">
-        <h3>Multiple Selection</h3>
-        <ReactSelection
           value={v2}
           onChange={(e) => {
             setV2(e);
-            console.log('selected values: ', e);
+            setJson({ ...json, v2: e });
+          }}
+          items={items}
+          className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
+      </div>
+      <div className="y-2">
+        <h3>Multiple Selection(v3)</h3>
+        <ReactSelection
+          value={v3}
+          onChange={(e) => {
+            setV3(e);
+            setJson({ ...json, v3: e });
           }}
           items={items}
           multiple
