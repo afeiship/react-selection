@@ -561,12 +561,12 @@
   resolved "https://registry.npmmirror.com/@jswork/noop/-/noop-1.0.0.tgz#e9f080ab835b63fa17141239a2ecbf4731e5fd79"
   integrity sha512-jlMgESiuHp7W4pFCbhQssFVdzNjRDDnVfmhOIYmHRbKxWwTOEFpgC2e/BbXc/u96N3qTEEy9o3Wie4hUu0fAYw==
 
-"@jswork/presets-tailwind@^1.0.52":
-  version "1.0.63"
-  resolved "https://registry.npmmirror.com/@jswork/presets-tailwind/-/presets-tailwind-1.0.63.tgz#0f6be841ad952ad1a44c96e3bb6bd769a0240275"
-  integrity sha512-SY9wzR8qk+6mFc+tXx8WXCJWW86NAfcvdAdPqid2yTEC1ullbg+LLbqKpvGOhC3nLQatnLvfiLCqdO2lHZ3ikg==
+"@jswork/presets-tailwind@^1.0.64":
+  version "1.0.64"
+  resolved "https://registry.npmjs.org/@jswork/presets-tailwind/-/presets-tailwind-1.0.64.tgz#15e00a98d429d633cbd67a280c6748462a67b198"
+  integrity sha512-e0RPww4HnQY1U77vtVJIdK9LPXcPCi4xPXjxydxBYCCA+Z+USk1rpTCCxOna42NrsumY5Uwzc4WKuo5uWwZ38w==
   dependencies:
-    "@jswork/tailwind-blank" "^1.0.10"
+    "@jswork/tailwind-blank" "^1.0.11"
     "@jswork/tailwind-font-size" "^1.0.10"
     "@jswork/tailwind-font-weight" "^1.0.1"
     "@jswork/tailwind-heading" "^1.0.2"
@@ -592,10 +592,10 @@
   resolved "https://registry.npmmirror.com/@jswork/simple-date-format/-/simple-date-format-1.0.5.tgz#e24aea2e50aaca1028b689dbb0657b65c0cae2f3"
   integrity sha512-Af3J19ho30IRo1F9JxQhwYaRK1Z3mfzz92Fh+5c4dgRE9wgIneQ0a7yJiZ3JMsN8X9sOjMAp+AlCYGCmvanF/w==
 
-"@jswork/tailwind-blank@^1.0.10":
-  version "1.0.10"
-  resolved "https://registry.npmmirror.com/@jswork/tailwind-blank/-/tailwind-blank-1.0.10.tgz#3aa42724092c8ea87e5c5e90ba7fc1de6d1d1220"
-  integrity sha512-so28kY+mEM/Cb/wBRsEFpk4WibeCcWECjhtkLICWzDraFHKH9Z8LdI3Tg8grirSMbqKzj2F/3jNZXhz1BiTspA==
+"@jswork/tailwind-blank@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.npmjs.org/@jswork/tailwind-blank/-/tailwind-blank-1.0.11.tgz#077c05164830efc8ad84f75c9c34fa4d4e892041"
+  integrity sha512-38U9Dxfzpzo7By4kS9J4A3aej/HP2IW1i8rz9kjxTnvCgR+CRKq1NaFrJzS629hcMpMMYcO452keSvVfHxTj6Q==
 
 "@jswork/tailwind-font-size@^1.0.10":
   version "1.0.10"
