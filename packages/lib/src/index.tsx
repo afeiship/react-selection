@@ -11,6 +11,7 @@ const toggle = (list: any[], value: any) => {
   return list;
 };
 
+export type StdError = { code: string; }
 export type ReactSelectionProps<T extends { value: any }> = {
   activeClassName?: string;
   checkAble?: boolean;
@@ -18,6 +19,7 @@ export type ReactSelectionProps<T extends { value: any }> = {
   items: T[];
   value?: any;
   onChange?: (value: any) => void;
+  onError?: (error: StdError) => void;
   multiple?: boolean;
   template?: (args: TemplateArgs, opts?: any) => React.ReactNode;
   listProps?: Omit<ReactListProps, 'template' | 'items'>;
@@ -92,10 +94,15 @@ export default class ReactSelection<T extends {
   };
 
   handleItemSelectMultiple = (item: any) => {
-    const { value, onChange, max } = this.props;
+    const { value, onChange, max, onError } = this.props;
     const newValue = [...value];
     const res = toggle(newValue, item.value);
-    const calcRes = max! > 0? res.slice(0, max) : res;
+    const calcRes = max! > 0 ? res.slice(0, max) : res;
+    const hasExceed = calcRes.length > max!;
+    if (hasExceed) {
+      onError?.({ code: 'MAX_LIMIT_EXCEED' });
+      return;
+    }
     this.setState({ value: calcRes }, () => {
       onChange?.(calcRes);
     });
