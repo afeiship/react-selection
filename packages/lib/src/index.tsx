@@ -71,10 +71,10 @@ export default class ReactSelection<T extends {
     const { value } = this.state;
     const { index, item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
-    const isActive = multiple ? value.includes(item.value) : value === item.value;
-    const cxClassName = cx('react-selection-item', { 'is-active': isActive });
+    const active = multiple ? value.includes(item.value) : value === item.value;
+    const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
-    const calcOpts = { ...opts, key: index, className: cxClassName, cb };
+    const calcOpts = { ...opts, key: index, active, className: cxClassName, cb };
     return template?.(args, calcOpts);
   };
 
