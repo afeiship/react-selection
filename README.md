@@ -64,9 +64,9 @@ npm install -S @jswork/react-selection
             className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
         </div>
         <div className="y-2">
-          <h3>Single Selection + checkAble(v2)</h3>
+          <h3>Single Selection + reversible(v2)</h3>
           <ReactSelection
-            checkAble
+            reversible
             value={v2}
             onChange={(e) => {
               setV2(e);
