@@ -53,6 +53,7 @@ export default class ReactSelection<T extends {
     checkAble: false,
     multiple: false,
     onChange: noop,
+    onError: noop,
     items: [],
     template: defaultTemplate,
   };
@@ -98,7 +99,7 @@ export default class ReactSelection<T extends {
     const newValue = [...value];
     const res = toggle(newValue, item.value);
     const calcRes = max! > 0 ? res.slice(0, max) : res;
-    const hasExceed = calcRes.length > max!;
+    const hasExceed = res.length > max!;
     if (hasExceed) {
       onError?.({ code: 'MAX_LIMIT_EXCEED' });
       return;
@@ -109,7 +110,22 @@ export default class ReactSelection<T extends {
   };
 
   render() {
-    const { className, children, template, items, listProps, activeClassName, checkAble, ...rest } = this.props;
+    const {
+      className,
+      children,
+      template,
+      items,
+      listProps,
+      activeClassName,
+      checkAble,
+      onError,
+      onChange,
+      value,
+      max,
+      multiple,
+      ...rest
+    } = this.props;
+
     return (
       <div data-component={CLASS_NAME} className={cx(CLASS_NAME, className)} {...rest}>
         <ReactList items={items} template={this.handleTemplate} {...listProps} />

@@ -61,6 +61,9 @@ function App() {
             setV3(e);
             setJson({ ...json, v3: e });
           }}
+          onError={(err) => {
+            console.log('err:', err);
+          }}
           items={items}
           multiple
           className="x-4 *:bg-slate-400 *:rounded-md *:px-2 *:py-1 cursor-pointer" />
