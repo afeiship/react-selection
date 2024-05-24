@@ -14,7 +14,7 @@ const toggle = (list: any[], value: any) => {
 export type StdError = { code: string; }
 export type ReactSelectionProps<T extends { value: any }> = {
   activeClassName?: string;
-  checkAble?: boolean;
+  reversible?: boolean;
   max?: number;
   items: T[];
   value?: any;
@@ -50,7 +50,7 @@ export default class ReactSelection<T extends {
   static defaultProps = {
     activeClassName: 'is-active',
     max: 0,
-    checkAble: false,
+    reversible: false,
     multiple: false,
     onChange: noop,
     onError: noop,
@@ -84,11 +84,11 @@ export default class ReactSelection<T extends {
   };
 
   handleItemSelectSingle = (item: any) => {
-    const { onChange, checkAble } = this.props;
+    const { onChange, reversible } = this.props;
     const stateValue = this.state.value;
     const itemValue = item.value;
     const isChecked = itemValue === stateValue;
-    const value = (checkAble && isChecked) ? null : itemValue;
+    const value = (reversible && isChecked) ? null : itemValue;
     this.setState({ value }, () => {
       if (stateValue !== value) onChange?.(value);
     });
@@ -117,7 +117,7 @@ export default class ReactSelection<T extends {
       items,
       listProps,
       activeClassName,
-      checkAble,
+      reversible,
       onError,
       onChange,
       value,
