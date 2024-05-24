@@ -53,9 +53,10 @@ function App() {
           className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
       </div>
       <div className="y-2">
-        <h3>Multiple Selection(v3)</h3>
+        <h3>Multiple Selection(v3, max:3)</h3>
         <ReactSelection
           value={v3}
+          max={3}
           onChange={(e) => {
             setV3(e);
             setJson({ ...json, v3: e });

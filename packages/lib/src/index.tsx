@@ -14,6 +14,7 @@ const toggle = (list: any[], value: any) => {
 export type ReactSelectionProps<T extends { value: any }> = {
   activeClassName?: string;
   checkAble?: boolean;
+  max?: number;
   items: T[];
   value?: any;
   onChange?: (value: any) => void;
@@ -46,6 +47,7 @@ export default class ReactSelection<T extends {
   static version = '__VERSION__';
   static defaultProps = {
     activeClassName: 'is-active',
+    max: 0,
     checkAble: false,
     multiple: false,
     onChange: noop,
@@ -90,11 +92,12 @@ export default class ReactSelection<T extends {
   };
 
   handleItemSelectMultiple = (item: any) => {
-    const { value, onChange } = this.props;
+    const { value, onChange, max } = this.props;
     const newValue = [...value];
-    toggle(newValue, item.value);
-    this.setState({ value: newValue }, () => {
-      onChange?.(newValue);
+    const res = toggle(newValue, item.value);
+    const calcRes = max! > 0? res.slice(0, max) : res;
+    this.setState({ value: calcRes }, () => {
+      onChange?.(calcRes);
     });
   };
 
