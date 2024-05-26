@@ -13,15 +13,56 @@ const toggle = (list: any[], value: any) => {
 
 export type StdError = { code: string; }
 export type ReactSelectionProps<T extends { value: any }> = {
+  /**
+   * The class name of active item.
+   * @default 'is-active'
+   */
   activeClassName?: string;
+  /**
+   * If true, the selection can be reversible.
+   * @default false
+   */
   reversible?: boolean;
+  /**
+   * The maximum number of selection.
+   * @default 0(unlimited)
+   */
   max?: number;
+  /**
+   * The items(data) to be selected.
+   * @default []
+   */
   items: T[];
+  /**
+   * The value of selection.
+   * @default null
+   */
   value?: any;
+  /**
+   * The change handler.
+   * @param value
+   */
   onChange?: (value: any) => void;
+  /**
+   * The error handler.
+   * @param error
+   */
   onError?: (error: StdError) => void;
+  /**
+   * If true, multiple selection is allowed.
+   * @default false
+   */
   multiple?: boolean;
+  /**
+   * The template for rendering each item.
+   * @param args
+   * @param opts
+   */
   template?: (args: TemplateArgs, opts?: any) => React.ReactNode;
+  /**
+   * The props for ReactList component.
+   * @default {}
+   */
   listProps?: Omit<ReactListProps, 'template' | 'items'>;
 } & HTMLAttributes<HTMLDivElement>;
 
