@@ -373,7 +373,7 @@
     classnames "^2.2.6"
 
 "@jswork/react-selection@^1.0.0", "@jswork/react-selection@file:/Users/aric/github/react-selection/packages/lib":
-  version "1.0.5"
+  version "1.0.6"
   resolved "file:packages/lib"
   dependencies:
     "@jswork/react-list" "^1.2.3"
