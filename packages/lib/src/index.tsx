@@ -148,8 +148,9 @@ export default class ReactSelection<T extends {
   };
 
   handleItemSelectMultiple = (item: any) => {
-    const { value, onChange, max, onError } = this.props;
-    const newValue = [...value];
+    const { onChange, max, onError } = this.props;
+    const stateValue = this.state.value;
+    const newValue = [...stateValue];
     const res = toggle(newValue, item.value);
     const calcRes = max! > 0 ? res.slice(0, max) : res;
     const hasExceed = res.length > max!;
