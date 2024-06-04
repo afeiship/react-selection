@@ -45,12 +45,12 @@ npm install -S @jswork/react-selection
     ];
     return (
       <div className="m-10 p-4 y-5 shadow bg-gray-100 text-gray-800 hover:shadow-md transition-all">
-        <div className="badge badge-warning absolute right-0 top-0 m-4">
-          Build Time: {BUILD_TIME}
-        </div>
+        <div className="badge badge-warning absolute right-0 top-0 m-4">Build Time: {BUILD_TIME}</div>
         <h1>react-selection</h1>
         <div className="mockup-code">
-          <pre><code>{JSON.stringify(json)}</code></pre>
+          <pre>
+            <code>{JSON.stringify(json)}</code>
+          </pre>
         </div>
         <div className="y-2">
           <h3>Single Selection(v1)</h3>
@@ -61,7 +61,8 @@ npm install -S @jswork/react-selection
               setJson({ ...json, v1: e });
             }}
             items={items}
-            className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
+            className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer"
+          />
         </div>
         <div className="y-2">
           <h3>Single Selection + reversible(v2)</h3>
@@ -73,23 +74,35 @@ npm install -S @jswork/react-selection
               setJson({ ...json, v2: e });
             }}
             items={items}
-            className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer" />
+            className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer"
+          />
         </div>
         <div className="y-2">
           <h3>Multiple Selection(v3, max:3)</h3>
           <ReactSelection
+            className="x-4"
             value={v3}
             max={3}
             onChange={(e) => {
               setV3(e);
               setJson({ ...json, v3: e });
             }}
-            onError={(err) => {
-              console.log('err:', err);
-            }}
+            onError={(err) => console.log('err:', err)}
             items={items}
+            template={({ item }, options) => {
+              const themeCls = options?.active ? 'btn-primary' : 'btn-default';
+              return (
+                <button
+                  key={item.value}
+                  disabled={options?.value.length >= 3 && !options?.active}
+                  className={`btn btn-sm ${themeCls}`}
+                  onClick={options?.cb}>
+                  {item.label}
+                </button>
+              );
+            }}
             multiple
-            className="x-4 *:bg-slate-400 *:rounded-md *:px-2 *:py-1 cursor-pointer" />
+          />
         </div>
       </div>
     );
