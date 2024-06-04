@@ -71,9 +71,9 @@ function App() {
             return (
               <button
                 key={item.value}
-                disabled={options.value.length >= 3 && !options.active}
+                disabled={options?.value.length >= 3 && !options?.active}
                 className={`btn btn-sm ${themeCls}`}
-                onClick={options.cb}>
+                onClick={options?.cb}>
                 {item.label}
               </button>
             );
