@@ -12,6 +12,17 @@ const toggle = (list: any[], value: any) => {
 };
 
 export type StdError = { code: string; }
+
+export interface ItemOptions {
+  key: number;
+  active: boolean;
+  value: any;
+  className: string;
+  cb: () => void;
+
+  [key: string]: any;
+}
+
 export type ReactSelectionProps<T extends { value: any }> = {
   /**
    * The class name of active item.
@@ -58,13 +69,14 @@ export type ReactSelectionProps<T extends { value: any }> = {
    * @param args
    * @param opts
    */
-  template?: (args: TemplateArgs, opts?: any) => React.ReactNode;
+  template?: (args: TemplateArgs, opts?: ItemOptions) => React.ReactNode;
   /**
    * The props for ReactList component.
    * @default {}
    */
   listProps?: Omit<ReactListProps, 'template' | 'items'>;
 } & HTMLAttributes<HTMLDivElement>;
+
 
 interface ReactSelectionState {
   value: any;
@@ -120,7 +132,7 @@ export default class ReactSelection<T extends {
     const active = multiple ? value.includes(item.value) : value === item.value;
     const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
-    const calcOpts = { ...opts, key: index, active, value, className: cxClassName, cb };
+    const calcOpts: ItemOptions = { ...opts, key: index, active, value, className: cxClassName, cb };
     return template?.(args, calcOpts);
   };
 
@@ -136,8 +148,9 @@ export default class ReactSelection<T extends {
   };
 
   handleItemSelectMultiple = (item: any) => {
-    const { value, onChange, max, onError } = this.props;
-    const newValue = [...value];
+    const { onChange, max, onError } = this.props;
+    const stateValue = this.state.value;
+    const newValue = [...stateValue];
     const res = toggle(newValue, item.value);
     const calcRes = max! > 0 ? res.slice(0, max) : res;
     const hasExceed = res.length > max!;
