@@ -118,11 +118,20 @@ export default class ReactSelection<
     };
   }
 
-  shouldComponentUpdate(nextProps: Readonly<ReactSelectionProps<any>>): boolean {
-    const { value } = nextProps;
+  // shouldComponentUpdate(nextProps: Readonly<ReactSelectionProps<any>>): boolean {
+  //   const { value } = nextProps;
+  //   const { value: stateValue } = this.state;
+  //   if (stateValue !== value) this.setState({ value });
+  //   return true;
+  // }
+
+  componentDidUpdate() {
+    const { value, onChange } = this.props;
     const { value: stateValue } = this.state;
-    if (stateValue !== value) this.setState({ value });
-    return true;
+    if (value !== undefined && value !== stateValue) {
+      this.setState({ value });
+      onChange?.(value);
+    }
   }
 
   handleTemplate = (args: TemplateArgs, opts?: any) => {
