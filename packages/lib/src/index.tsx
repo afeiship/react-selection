@@ -11,7 +11,9 @@ const toggle = (list: any[], value: any) => {
   return list;
 };
 
-export type StdError = { code: string; }
+export type StdError = { code: string };
+
+export type TemplateCallback = (args: TemplateArgs, opts?: any) => React.ReactNode;
 
 export interface ItemOptions {
   key: number;
@@ -69,14 +71,13 @@ export type ReactSelectionProps<T extends { value: any }> = {
    * @param args
    * @param opts
    */
-  template?: (args: TemplateArgs, opts?: ItemOptions) => React.ReactNode;
+  template?: TemplateCallback;
   /**
    * The props for ReactList component.
    * @default {}
    */
   listProps?: Omit<ReactListProps, 'template' | 'items'>;
 } & HTMLAttributes<HTMLDivElement>;
-
 
 interface ReactSelectionState {
   value: any;
@@ -86,18 +87,17 @@ const defaultTemplate = (args: TemplateArgs, opts?: any) => {
   const { item } = args;
   const { key, className, cb } = opts;
   return (
-    <div
-      key={key}
-      className={className}
-      onClick={cb}>
+    <div key={key} className={className} onClick={cb}>
       {item.label}
     </div>
   );
 };
 
-export default class ReactSelection<T extends {
-  value: any
-}> extends Component<ReactSelectionProps<T>, ReactSelectionState> {
+export default class ReactSelection<
+  T extends {
+    value: any;
+  },
+> extends Component<ReactSelectionProps<T>, ReactSelectionState> {
   static displayName = CLASS_NAME;
   static version = '__VERSION__';
   static defaultProps = {
@@ -120,7 +120,8 @@ export default class ReactSelection<T extends {
 
   shouldComponentUpdate(nextProps: Readonly<ReactSelectionProps<any>>): boolean {
     const { value } = nextProps;
-    if (this.state.value !== value) this.setState({ value });
+    const { value: stateValue } = this.state;
+    if (stateValue !== value) this.setState({ value });
     return true;
   }
 
@@ -132,7 +133,14 @@ export default class ReactSelection<T extends {
     const active = multiple ? value.includes(item.value) : value === item.value;
     const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
-    const calcOpts: ItemOptions = { ...opts, key: index, active, value, className: cxClassName, cb };
+    const calcOpts: ItemOptions = {
+      ...opts,
+      key: index,
+      active,
+      value,
+      className: cxClassName,
+      cb,
+    };
     return template?.(args, calcOpts);
   };
 
@@ -141,7 +149,7 @@ export default class ReactSelection<T extends {
     const stateValue = this.state.value;
     const itemValue = item.value;
     const isChecked = itemValue === stateValue;
-    const value = (reversible && isChecked) ? null : itemValue;
+    const value = reversible && isChecked ? null : itemValue;
     this.setState({ value }, () => {
       if (stateValue !== value) onChange?.(value);
     });
