@@ -2,6 +2,7 @@ import noop from '@jswork/noop';
 import cx from 'classnames';
 import React, { Component, HTMLAttributes } from 'react';
 import ReactList, { TemplateArgs, ReactListProps } from '@jswork/react-list';
+import fde from 'fast-deep-equal';
 
 const CLASS_NAME = 'react-selection';
 const toggle = (list: any[], value: any) => {
@@ -128,7 +129,8 @@ export default class ReactSelection<
   componentDidUpdate() {
     const { value, onChange } = this.props;
     const { value: stateValue } = this.state;
-    if (value !== undefined && value !== stateValue) {
+    const isEqual = fde(value, stateValue);
+    if (value !== undefined && !isEqual) {
       this.setState({ value });
       onChange?.(value);
     }
