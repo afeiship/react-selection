@@ -21,6 +21,7 @@ export interface ItemOptions {
   active: boolean;
   value: any;
   className: string;
+  max: number;
   cb: () => void;
 
   [key: string]: any;
@@ -137,7 +138,7 @@ export default class ReactSelection<
   }
 
   handleTemplate = (args: TemplateArgs, opts?: any) => {
-    const { multiple, template } = this.props;
+    const { multiple, template, max } = this.props;
     const { value } = this.state;
     const { index, item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
@@ -149,6 +150,7 @@ export default class ReactSelection<
       key: index,
       active,
       value,
+      max,
       className: cxClassName,
       cb,
     };
