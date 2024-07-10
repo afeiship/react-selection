@@ -142,7 +142,7 @@ export default class ReactSelection<
   }
 
   handleTemplate = (args: TemplateArgs, opts?: any) => {
-    const { multiple, template, max } = this.props;
+    const { multiple, template, max, options } = this.props;
     const { value } = this.state;
     const { index, item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
@@ -151,6 +151,7 @@ export default class ReactSelection<
     const cb = () => handleSelect(item);
     const calcOpts: ItemOptions = {
       ...opts,
+      ...options,
       key: index,
       active,
       value,
