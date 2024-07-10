@@ -75,10 +75,14 @@ export type ReactSelectionProps<T extends { value: any }> = {
    */
   template?: TemplateCallback;
   /**
+   * The extra options for template function.
+   */
+  options?: any;
+  /**
    * The props for ReactList component.
    * @default {}
    */
-  listProps?: Omit<ReactListProps, 'template' | 'items'>;
+  listProps?: Omit<ReactListProps, 'template' | 'items'| 'options'>;
 } & HTMLAttributes<HTMLDivElement>;
 
 interface ReactSelectionState {
@@ -190,6 +194,7 @@ export default class ReactSelection<
       children,
       template,
       items,
+      options,
       listProps,
       activeClassName,
       reversible,
@@ -203,7 +208,7 @@ export default class ReactSelection<
 
     return (
       <div data-component={CLASS_NAME} className={cx(CLASS_NAME, className)} {...rest}>
-        <ReactList items={items} template={this.handleTemplate} {...listProps} />
+        <ReactList items={items} template={this.handleTemplate} options={options} {...listProps} />
       </div>
     );
   }
