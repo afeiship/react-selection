@@ -1,7 +1,7 @@
 import noop from '@jswork/noop';
 import cx from 'classnames';
 import React, { Component, HTMLAttributes } from 'react';
-import ReactList, { TemplateArgs, ReactListProps } from '@jswork/react-list';
+import ReactList, { TemplateArgs, ReactListProps, TemplateCallback } from '@jswork/react-list';
 import fde from 'fast-deep-equal';
 
 const CLASS_NAME = 'react-selection';
@@ -13,8 +13,6 @@ const toggle = (list: any[], value: any) => {
 };
 
 export type StdError = { code: string };
-
-export type TemplateCallback = (args: TemplateArgs, opts?: any) => React.ReactNode;
 
 export interface ItemOptions {
   key: number;
@@ -37,7 +35,7 @@ export type ReactSelectionProps<T extends { value: any }> = {
    * If true, the selection can be reversible.
    * @default false
    */
-  reversible?: boolean;
+  allowDeselect?: boolean;
   /**
    * The maximum number of selection.
    * @default 0(unlimited)
@@ -82,16 +80,16 @@ export type ReactSelectionProps<T extends { value: any }> = {
    * The props for ReactList component.
    * @default {}
    */
-  listProps?: Omit<ReactListProps, 'template' | 'items'| 'options'>;
+  listProps?: Omit<ReactListProps, 'template' | 'items' | 'options'>;
 } & HTMLAttributes<HTMLDivElement>;
 
 interface ReactSelectionState {
   value: any;
 }
 
-const defaultTemplate = (args: TemplateArgs, opts?: any) => {
-  const { item } = args;
-  const { key, className, cb } = opts;
+const defaultTemplate = (args: TemplateArgs) => {
+  const { item, options } = args;
+  const { key, className, cb } = options;
   return (
     <div key={key} className={className} onClick={cb}>
       {item.label}
@@ -109,7 +107,7 @@ export default class ReactSelection<
   static defaultProps = {
     activeClassName: 'is-active',
     max: 0,
-    reversible: false,
+    allowDeselect: false,
     multiple: false,
     onChange: noop,
     onError: noop,
@@ -124,13 +122,6 @@ export default class ReactSelection<
     };
   }
 
-  // shouldComponentUpdate(nextProps: Readonly<ReactSelectionProps<any>>): boolean {
-  //   const { value } = nextProps;
-  //   const { value: stateValue } = this.state;
-  //   if (stateValue !== value) this.setState({ value });
-  //   return true;
-  // }
-
   componentDidUpdate() {
     const { value, onChange } = this.props;
     const { value: stateValue } = this.state;
@@ -141,7 +132,7 @@ export default class ReactSelection<
     }
   }
 
-  handleTemplate = (args: TemplateArgs, opts?: any) => {
+  handleTemplate = (args: TemplateArgs) => {
     const { multiple, template, max, options } = this.props;
     const { value } = this.state;
     const { index, item } = args;
@@ -150,24 +141,23 @@ export default class ReactSelection<
     const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
     const calcOpts: ItemOptions = {
-      ...opts,
-      ...options,
       key: index,
       active,
       value,
-      max,
+      max: max!,
       className: cxClassName,
       cb,
     };
-    return template?.(args, calcOpts);
+
+    return template?.({ ...args, options: { ...options, ...calcOpts } });
   };
 
   handleItemSelectSingle = (item: any) => {
-    const { onChange, reversible } = this.props;
+    const { onChange, allowDeselect } = this.props;
     const stateValue = this.state.value;
     const itemValue = item.value;
     const isChecked = itemValue === stateValue;
-    const value = reversible && isChecked ? null : itemValue;
+    const value = allowDeselect && isChecked ? null : itemValue;
     this.setState({ value }, () => {
       if (stateValue !== value) onChange?.(value);
     });
@@ -198,7 +188,7 @@ export default class ReactSelection<
       options,
       listProps,
       activeClassName,
-      reversible,
+      allowDeselect,
       onError,
       onChange,
       value,
