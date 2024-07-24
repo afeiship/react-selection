@@ -65,9 +65,9 @@ npm install -S @jswork/react-selection
           />
         </div>
         <div className="y-2">
-          <h3>Single Selection + reversible(v2)</h3>
+          <h3>Single Selection + allowDeselect(v2)</h3>
           <ReactSelection
-            reversible
+            allowDeselect
             value={v2}
             onChange={(e) => {
               setV2(e);
@@ -89,7 +89,7 @@ npm install -S @jswork/react-selection
             }}
             onError={(err) => console.log('err:', err)}
             items={items}
-            template={({ item }, options) => {
+            template={({ item, options }) => {
               const themeCls = options?.active ? 'btn-primary' : 'btn-default';
               return (
                 <button
