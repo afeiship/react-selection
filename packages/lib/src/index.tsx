@@ -146,7 +146,7 @@ export default class ReactSelection<
     const { value } = this.state;
     const { index, item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
-    const active = multiple ? value.includes(item.value) : value === item.value;
+    const active = multiple ? value?.includes(item.value) : value === item.value;
     const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
     const calcOpts: ItemOptions = {
