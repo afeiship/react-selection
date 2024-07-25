@@ -113,6 +113,8 @@ export default class ReactSelection<
     const cb = () => handleSelect(item);
     const calcOpts = {
       ...options,
+      multiple,
+      max,
       disabled,
       active,
       value,
