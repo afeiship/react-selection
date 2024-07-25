@@ -1,4 +1,5 @@
 import ReactSelection from '@jswork/react-selection/src';
+import { TemplateArgs } from '@jswork/react-list';
 import './index.css';
 import '@jswork/react-selection/src/style.scss';
 import { useState } from 'react';
@@ -12,6 +13,18 @@ function App() {
     v2: 'grape',
     v3: ['banana', 'orange'],
   });
+
+  const template = ({ item, options }: TemplateArgs) => {
+    const themeCls = options?.active ? 'btn-primary' : 'btn-default';
+    return (
+      <button
+        key={item.value}
+        className={`btn btn-sm ${themeCls}`}
+        onClick={options?.cb}>
+        {item.label}
+      </button>
+    );
+  };
 
   const items = [
     { value: 'apple', label: 'Apple' },
@@ -38,7 +51,8 @@ function App() {
             setJson({ ...json, v1: e });
           }}
           items={items}
-          className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer"
+          template={template}
+          className="x-4 cursor-pointer"
         />
       </div>
       <div className="y-2">
@@ -51,7 +65,8 @@ function App() {
             setJson({ ...json, v2: e });
           }}
           items={items}
-          className="x-4 *:bg-gray-400 *:rounded-md *:p-2 cursor-pointer"
+          template={template}
+          className="x-4  cursor-pointer"
         />
       </div>
       <div className="y-2">
@@ -66,12 +81,12 @@ function App() {
           }}
           onError={(err) => console.log('err:', err)}
           items={items}
-          template={({ item, options }) => {
+          template={({ item, options }: TemplateArgs) => {
             const themeCls = options?.active ? 'btn-primary' : 'btn-default';
             return (
               <button
                 key={item.value}
-                disabled={options?.value.length >= 3 && !options?.active}
+                disabled={options?.disabled}
                 className={`btn btn-sm ${themeCls}`}
                 onClick={options?.cb}>
                 {item.label}

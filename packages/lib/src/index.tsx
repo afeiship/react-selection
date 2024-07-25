@@ -16,7 +16,7 @@ export type StdError = { code: string };
 
 export type ReactSelectionProps<T extends { value: any }> = {
   /**
-   * If true, the selection can be reversible.
+   * If true, the selection can be deselected.
    * @default false
    */
   allowDeselect?: boolean;
@@ -53,9 +53,8 @@ export type ReactSelectionProps<T extends { value: any }> = {
   /**
    * The template for rendering each item.
    * @param args
-   * @param opts
    */
-  template: TemplateCallback;
+  template?: TemplateCallback;
   /**
    * The extra options for template function.
    */
@@ -105,20 +104,22 @@ export default class ReactSelection<
   }
 
   handleTemplate = (args: TemplateArgs) => {
-    const { multiple, template, options } = this.props;
+    const { multiple, template, max, options } = this.props;
     const { value } = this.state;
     const { item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
     const active = multiple ? value?.includes(item.value) : value === item.value;
+    const disabled = multiple && value?.length >= max! && !active;
     const cb = () => handleSelect(item);
     const calcOpts = {
       ...options,
+      disabled,
       active,
       value,
       cb,
     };
 
-    return template({ ...args, options: calcOpts });
+    return template?.({ ...args, options: calcOpts });
   };
 
   handleItemSelectSingle = (item: any) => {

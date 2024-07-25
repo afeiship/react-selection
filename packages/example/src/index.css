@@ -3,8 +3,3 @@
 @tailwind utilities;
 
 /* Your custom CSS here */
-
-.is-active {
-  color: red;
-  @apply !bg-white;
-}
