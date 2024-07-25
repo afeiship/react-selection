@@ -14,23 +14,7 @@ const toggle = (list: any[], value: any) => {
 
 export type StdError = { code: string };
 
-export interface ItemOptions {
-  key: number;
-  active: boolean;
-  value: any;
-  className: string;
-  max: number;
-  cb: () => void;
-
-  [key: string]: any;
-}
-
 export type ReactSelectionProps<T extends { value: any }> = {
-  /**
-   * The class name of active item.
-   * @default 'is-active'
-   */
-  activeClassName?: string;
   /**
    * If true, the selection can be reversible.
    * @default false
@@ -71,7 +55,7 @@ export type ReactSelectionProps<T extends { value: any }> = {
    * @param args
    * @param opts
    */
-  template?: TemplateCallback;
+  template: TemplateCallback;
   /**
    * The extra options for template function.
    */
@@ -87,16 +71,6 @@ interface ReactSelectionState {
   value: any;
 }
 
-const defaultTemplate = (args: TemplateArgs) => {
-  const { item, options } = args;
-  const { key, className, cb } = options;
-  return (
-    <div key={key} className={className} onClick={cb}>
-      {item.label}
-    </div>
-  );
-};
-
 export default class ReactSelection<
   T extends {
     value: any;
@@ -105,14 +79,12 @@ export default class ReactSelection<
   static displayName = CLASS_NAME;
   static version = '__VERSION__';
   static defaultProps = {
-    activeClassName: 'is-active',
     max: 0,
     allowDeselect: false,
     multiple: false,
     onChange: noop,
     onError: noop,
     items: [],
-    template: defaultTemplate,
   };
 
   constructor(props) {
@@ -135,21 +107,19 @@ export default class ReactSelection<
   handleTemplate = (args: TemplateArgs) => {
     const { multiple, template, max, options } = this.props;
     const { value } = this.state;
-    const { index, item } = args;
+    const { item } = args;
     const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
     const active = multiple ? value?.includes(item.value) : value === item.value;
-    const cxClassName = cx('react-selection-item', { 'is-active': active });
     const cb = () => handleSelect(item);
-    const calcOpts: ItemOptions = {
-      key: index,
+    const calcOpts = {
+      ...options,
       active,
       value,
       max: max!,
-      className: cxClassName,
       cb,
     };
 
-    return template?.({ ...args, options: { ...options, ...calcOpts } });
+    return template({ ...args, options: calcOpts });
   };
 
   handleItemSelectSingle = (item: any) => {
@@ -187,7 +157,6 @@ export default class ReactSelection<
       items,
       options,
       listProps,
-      activeClassName,
       allowDeselect,
       onError,
       onChange,
