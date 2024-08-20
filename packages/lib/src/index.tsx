@@ -78,7 +78,7 @@ export default class ReactSelection<
   static displayName = CLASS_NAME;
   static version = '__VERSION__';
   static defaultProps = {
-    max: 0,
+    max: 1000,
     allowDeselect: false,
     multiple: false,
     onChange: noop,
