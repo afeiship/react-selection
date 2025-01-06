@@ -1,6 +1,6 @@
+import React, { HTMLAttributes, useState, useEffect } from 'react';
 import noop from '@jswork/noop';
 import cx from 'classnames';
-import React, { Component, HTMLAttributes } from 'react';
 import ReactList, { TemplateArgs, ReactListProps, TemplateCallback } from '@jswork/react-list';
 import fde from 'fast-deep-equal';
 
@@ -66,50 +66,46 @@ export type ReactSelectionProps<T extends { value: any }> = {
   listProps?: Omit<ReactListProps, 'template' | 'items' | 'options'>;
 } & HTMLAttributes<HTMLDivElement>;
 
-interface ReactSelectionState {
-  value: any;
-}
+const defaults: ReactSelectionProps<any> = {
+  max: 1000,
+  allowDeselect: false,
+  multiple: false,
+  onChange: noop,
+  onError: noop,
+  items: [],
+};
 
-export default class ReactSelection<
-  T extends {
-    value: any;
-  },
-> extends Component<ReactSelectionProps<T>, ReactSelectionState> {
-  static displayName = CLASS_NAME;
-  static version = '__VERSION__';
-  static defaultProps = {
-    max: 1000,
-    allowDeselect: false,
-    multiple: false,
-    onChange: noop,
-    onError: noop,
-    items: [],
-  };
+const ReactSelection = <T extends { value: any }>(props: ReactSelectionProps<T>) => {
+  const {
+    allowDeselect = false,
+    max = 1000,
+    items = [],
+    value,
+    onChange = noop,
+    onError = noop,
+    multiple = false,
+    template,
+    options,
+    listProps,
+    className,
+    children,
+    ...rest
+  } = { ...defaults, ...props };
+  const [stateValue, setStateValue] = useState(value || (multiple ? [] : null));
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.value || (props.multiple ? [] : null),
-    };
-  }
-
-  componentDidUpdate() {
-    const { value, onChange } = this.props;
-    const { value: stateValue } = this.state;
+  useEffect(() => {
     const isEqual = fde(value, stateValue);
     if (value !== undefined && !isEqual) {
-      this.setState({ value });
+      setStateValue(value);
       onChange?.(value);
     }
-  }
+  }, [value, onChange, stateValue]);
 
-  handleTemplate = (args: TemplateArgs) => {
-    const { multiple, template, max, options } = this.props;
-    const { value } = this.state;
+  const handleTemplate = (args: TemplateArgs) => {
     const { item } = args;
-    const handleSelect = multiple ? this.handleItemSelectMultiple : this.handleItemSelectSingle;
-    const active = multiple ? value?.includes(item.value) : value === item.value;
-    const disabled = multiple && value?.length >= max! && !active;
+    const handleSelect = multiple ? handleItemSelectMultiple : handleItemSelectSingle;
+    const active = multiple ? stateValue?.includes(item.value) : stateValue === item.value;
+    const disabled = multiple && stateValue?.length >= max && !active;
     const cb = () => handleSelect(item);
     const calcOpts = {
       ...options,
@@ -117,61 +113,38 @@ export default class ReactSelection<
       max,
       disabled,
       active,
-      value,
+      value: stateValue,
       cb,
     };
 
     return template?.({ ...args, options: calcOpts });
   };
 
-  handleItemSelectSingle = (item: any) => {
-    const { onChange, allowDeselect } = this.props;
-    const stateValue = this.state.value;
+  const handleItemSelectSingle = (item: any) => {
     const itemValue = item.value;
     const isChecked = itemValue === stateValue;
-    const value = allowDeselect && isChecked ? null : itemValue;
-    this.setState({ value }, () => {
-      if (stateValue !== value) onChange?.(value);
-    });
+    const newValue = allowDeselect && isChecked ? null : itemValue;
+    setStateValue(newValue);
+    if (stateValue !== newValue) onChange?.(newValue);
   };
 
-  handleItemSelectMultiple = (item: any) => {
-    const { onChange, max, onError } = this.props;
-    const stateValue = this.state.value || [];
-    const newValue = [...stateValue];
-    const res = toggle(newValue, item.value);
-    const calcRes = max! > 0 ? res.slice(0, max) : res;
-    const hasExceed = res.length > max!;
+  const handleItemSelectMultiple = (item: any) => {
+    const newValue = toggle([...stateValue], item.value);
+    const calcRes = max > 0 ? newValue.slice(0, max) : newValue;
+    const hasExceed = newValue.length > max;
     if (hasExceed) {
       onError?.({ code: 'MAX_LIMIT_EXCEED' });
       return;
     }
-    this.setState({ value: calcRes }, () => {
-      onChange?.(calcRes);
-    });
+    setStateValue(calcRes);
+    onChange?.(calcRes);
   };
 
-  render() {
-    const {
-      className,
-      children,
-      template,
-      items,
-      options,
-      listProps,
-      allowDeselect,
-      onError,
-      onChange,
-      value,
-      max,
-      multiple,
-      ...rest
-    } = this.props;
+  return (
+    <div data-component={CLASS_NAME} className={cx(CLASS_NAME, className)} {...rest}>
+      <ReactList items={items} template={handleTemplate} options={options} {...listProps} />
+    </div>
+  );
+};
 
-    return (
-      <div data-component={CLASS_NAME} className={cx(CLASS_NAME, className)} {...rest}>
-        <ReactList items={items} template={this.handleTemplate} options={options} {...listProps} />
-      </div>
-    );
-  }
-}
+export default ReactSelection;
