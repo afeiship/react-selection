@@ -1,6 +1,6 @@
 {
   "name": "@jswork/react-selection",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -29,8 +29,6 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "@jswork/react-list": "^2.0.1",
-    "classnames": "latest",
     "fast-deep-equal": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
