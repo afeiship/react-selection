@@ -1,0 +1,289 @@
+# React Selection
+
+> A headless, type-safe selection component for React with slot-based architecture.
+
+## Overview
+
+ReactSelection is a lightweight, headless selection component built on top of `@jswork/react-list`. It provides single/multiple selection logic with zero styling, giving you full control over presentation through a flexible slot system.
+
+## Important Notes for Agents
+
+- **Component location**: `./packages/lib/src/index.tsx`
+- **Package name**: `@jswork/react-selection`
+- **Main exports**: `ReactSelection` (component), `ReactSelectionProps` (type), `SelectionItemSlotProps` (interface), `Slot` (type), `ErrorCode` (enum)
+- **Headless component**: No CSS, no wrapper DOM, no className — you provide all styling via slots
+- **Built on**: `@jswork/react-list` v2.0.0 (inherits `ReactListProps`)
+- **Peer dependencies**: `react`, `fast-deep-equal`
+
+## Key Features
+
+- **Headless / Unstyled**: No DOM wrapper, no CSS — renders exactly what your slots return
+- **Slot-based architecture**: Full control over item rendering via typed slots
+- **Single & multiple selection**: Toggle via `multiple` prop
+- **Allow deselect**: Optional deselect behavior for single selection
+- **Max limit**: Configurable maximum for multiple selection with error callback
+- **Type-safe generics**: `<T extends { value: any }>` ensures data integrity
+- **Inherits ReactList**: All `ReactListProps` (`data`, `keyExtractor`, etc.) pass through directly
+
+## Installation
+
+```bash
+npm install -S @jswork/react-selection
+# or
+yarn add @jswork/react-selection
+# or
+pnpm add @jswork/react-selection
+```
+
+## Component API
+
+### ReactSelection Props
+
+Extends `Omit<ReactListProps<T>, 'slots'>` plus the following:
+
+```typescript
+interface ReactSelectionProps<T extends { value: any }> {
+  // From ReactListProps (inherited):
+  data: T[];
+  keyExtractor?: keyof T | ((item: T, index: number) => string | number);
+
+  // Selection-specific:
+  allowDeselect?: boolean;   // default: false
+  max?: number;              // default: 1000
+  multiple?: boolean;        // default: false
+  value?: any;               // default: null (or [] when multiple)
+  onChange?: (value: any) => void;
+  onError?: (error: { code: ErrorCode }) => void;
+
+  // Slot configuration:
+  slots: {
+    item: Slot<SelectionItemSlotProps<T>>;
+    empty?: Slot<{ data: T[] }>;
+  };
+}
+```
+
+### SelectionItemSlotProps
+
+Props received by the `item` slot:
+
+```typescript
+interface SelectionItemSlotProps<T> {
+  item: T;           // The current data item
+  index: number;     // Index in the data array
+  data: T[];         // The full data array
+  active: boolean;   // Whether this item is currently selected
+  disabled: boolean; // Whether this item is disabled (max reached)
+  onClick: () => void; // Handler to select/deselect this item
+}
+```
+
+### ErrorCode Enum
+
+```typescript
+enum ErrorCode {
+  MAX_LIMIT_EXCEED = 'MAX_LIMIT_EXCEED',
+}
+```
+
+### Slot Type
+
+A slot can be one of three forms:
+
+1. **Component**: `MyComponent`
+2. **Render function**: `({ item, active, onClick }) => <button onClick={onClick}>...</button>`
+3. **Component with default props**: `{ component: MyComponent, props: { className: 'item' } }`
+
+## Usage Examples
+
+### Single Selection
+
+```tsx
+import { ReactSelection } from '@jswork/react-selection';
+
+const items = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'banana', label: 'Banana' },
+  { value: 'orange', label: 'Orange' },
+];
+
+function App() {
+  const [selected, setSelected] = useState('apple');
+
+  return (
+    <ReactSelection
+      data={items}
+      value={selected}
+      onChange={setSelected}
+      slots={{
+        item: ({ item, active, onClick }) => (
+          <button
+            className={active ? 'btn-primary' : 'btn-default'}
+            onClick={onClick}
+          >
+            {item.label}
+          </button>
+        ),
+      }}
+    />
+  );
+}
+```
+
+### Single Selection with Allow Deselect
+
+```tsx
+<ReactSelection
+  allowDeselect
+  data={items}
+  value={selected}
+  onChange={setSelected}
+  slots={{
+    item: ({ item, active, onClick }) => (
+      <button
+        className={active ? 'btn-primary' : 'btn-default'}
+        onClick={onClick}
+      >
+        {item.label}
+      </button>
+    ),
+  }}
+/>
+```
+
+### Multiple Selection with Max Limit
+
+```tsx
+<ReactSelection
+  multiple
+  max={3}
+  data={items}
+  value={selectedItems}
+  onChange={setSelectedItems}
+  onError={(err) => {
+    if (err.code === ErrorCode.MAX_LIMIT_EXCEED) {
+      console.warn('Maximum selections reached');
+    }
+  }}
+  slots={{
+    item: ({ item, active, disabled, onClick }) => (
+      <button
+        disabled={disabled}
+        className={active ? 'btn-primary' : 'btn-default'}
+        onClick={onClick}
+      >
+        {item.label}
+      </button>
+    ),
+  }}
+/>
+```
+
+### With Empty State
+
+```tsx
+<ReactSelection
+  data={items}
+  value={selected}
+  onChange={setSelected}
+  slots={{
+    item: ({ item, active, onClick }) => (
+      <div onClick={onClick} className={active ? 'active' : ''}>
+        {item.label}
+      </div>
+    ),
+    empty: () => <div>No items available</div>,
+  }}
+/>
+```
+
+### Using Slot with Component Reference
+
+```tsx
+const ItemButton = ({ item, active, onClick }: SelectionItemSlotProps<Fruit>) => (
+  <button className={active ? 'active' : ''} onClick={onClick}>
+    {item.label}
+  </button>
+);
+
+<ReactSelection
+  data={items}
+  value={selected}
+  onChange={setSelected}
+  slots={{
+    item: { component: ItemButton, props: { className: 'btn-sm' } },
+  }}
+/>
+```
+
+### Custom Key Extractor
+
+```tsx
+const items = [
+  { id: 1, value: 'apple', label: 'Apple' },
+  { id: 2, value: 'banana', label: 'Banana' },
+];
+
+<ReactSelection
+  data={items}
+  keyExtractor="id"
+  value={selected}
+  onChange={setSelected}
+  slots={{ item: ItemSlot }}
+/>
+```
+
+## Component Patterns
+
+### Data Item Type
+
+All data items must have a `value` property:
+
+```typescript
+interface YourDataItem {
+  value: string;  // or number — required for selection logic
+  label: string;
+  // ... any other fields
+}
+```
+
+### Controlled vs Uncontrolled
+
+The component is controlled via `value` + `onChange`:
+
+```tsx
+// Controlled (recommended):
+const [value, setValue] = useState(null);
+<ReactSelection value={value} onChange={setValue} ... />
+
+// Multiple selection initial value:
+const [value, setValue] = useState([]);
+<ReactSelection multiple value={value} onChange={setValue} ... />
+```
+
+## Architecture Notes
+
+- **Headless**: ReactSelection renders NO wrapper DOM element — it directly returns a `ReactList`
+- **Composition**: ReactSelection wraps `@jswork/react-list`, adding selection behavior to the list's slot system
+- **Slot forwarding**: The user's `slots.item` is wrapped internally — selection state (`active`, `disabled`, `onClick`) is injected before rendering
+- **Key handling**: Keys are derived from `item.value` by default, fallback to `index`
+- **Performance**: Selection handlers are memoized with `useCallback`; state comparison uses `fast-deep-equal`
+
+## Project Structure
+
+```
+react-selection/
+├── packages/
+│   ├── lib/
+│   │   └── src/
+│   │       └── index.tsx       # Main component
+│   └── example/
+│       └── src/
+│           └── App.tsx         # Usage examples
+├── llms.txt                    # This file
+└── README.md
+```
+
+## License
+
+MIT
