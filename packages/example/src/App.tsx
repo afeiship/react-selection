@@ -31,74 +31,78 @@ function App() {
       </div>
       <div className="y-2">
         <h3>Single Selection(v1)</h3>
-        <ReactSelection
-          value={v1}
-          onChange={(e) => {
-            setV1(e);
-            setJson({ ...json, v1: e });
-          }}
-          data={items}
-          slots={{
-            item: ({ item, active, onClick }) => (
-              <button
-                className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
-                onClick={onClick}>
-                {item.label}
-              </button>
-            ),
-          }}
-          className="x-4 cursor-pointer"
-        />
-      </div>
-      <div className="y-2">
-        <h3>Single Selection + allowDeselect(v2)</h3>
-        <ReactSelection
-          allowDeselect
-          value={v2}
-          onChange={(e) => {
-            setV2(e);
-            setJson({ ...json, v2: e });
-          }}
-          data={items}
-          slots={{
-            item: ({ item, active, onClick }) => (
-              <button
-                className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
-                onClick={onClick}>
-                {item.label}
-              </button>
-            ),
-          }}
-          className="x-4 cursor-pointer"
-        />
-      </div>
-      <div className="y-2">
-        <h3>Multiple Selection(v3, max:3)</h3>
-        <ReactSelection
-          className="x-4"
-          value={v3}
-          max={3}
-          onChange={(e) => {
-            setV3(e);
-            setJson({ ...json, v3: e });
-          }}
-          onError={(err) => console.log('err:', err)}
-          data={items}
-          slots={{
-            item: ({ item, active, disabled, onClick }) => {
-              const themeCls = active ? 'btn-primary' : 'btn-default';
-              return (
+        <div className="x-3">
+          <ReactSelection
+            value={v1}
+            onChange={(e) => {
+              setV1(e);
+              setJson({ ...json, v1: e });
+            }}
+            data={items}
+            slots={{
+              item: ({ item, active, onClick }) => (
                 <button
-                  disabled={disabled}
-                  className={`btn btn-sm ${themeCls}`}
+                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
                   onClick={onClick}>
                   {item.label}
                 </button>
-              );
-            },
-          }}
-          multiple
-        />
+              ),
+            }}
+          />
+        </div>
+      </div>
+      <div className="y-2">
+        <h3>Single Selection + allowDeselect(v2)</h3>
+        <div className="x-3">
+          <ReactSelection
+            allowDeselect
+            value={v2}
+            onChange={(e) => {
+              setV2(e);
+              setJson({ ...json, v2: e });
+            }}
+            data={items}
+            slots={{
+              item: ({ item, active, onClick }) => (
+                <button
+                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
+                  onClick={onClick}>
+                  {item.label}
+                </button>
+              ),
+            }}
+          />
+        </div>
+      </div>
+      <div className="y-2">
+        <h3>Multiple Selection(v3, max:3)</h3>
+        <div className="x-3">
+          <ReactSelection
+            className="x-4"
+            value={v3}
+            max={3}
+            onChange={(e) => {
+              setV3(e);
+              setJson({ ...json, v3: e });
+            }}
+            onError={(err) => console.log('err:', err)}
+            data={items}
+            slots={{
+              item: ({ item, active, disabled, onClick }) => {
+                const themeCls = active ? 'btn-primary' : 'btn-default';
+                return (
+                  <button
+                    disabled={disabled}
+                    className={`btn btn-sm ${themeCls}`}
+                    onClick={onClick}>
+                    {item.label}
+                  </button>
+                );
+              },
+            }}
+            multiple
+          />
+        </div>
       </div>
     </div>
   );
