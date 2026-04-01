@@ -1,7 +1,5 @@
 import ReactSelection from '@jswork/react-selection/src';
-import { TemplateArgs } from '@jswork/react-list';
 import './index.css';
-import '@jswork/react-selection/src/style.scss';
 import { useState } from 'react';
 
 function App() {
@@ -14,18 +12,6 @@ function App() {
     v3: ['banana', 'orange'],
   });
 
-  const template = ({ item, options }: TemplateArgs) => {
-    const themeCls = options?.active ? 'btn-primary' : 'btn-default';
-    return (
-      <button
-        key={item.value}
-        className={`btn btn-sm ${themeCls}`}
-        onClick={options?.cb}>
-        {item.label}
-      </button>
-    );
-  };
-
   const items = [
     { value: 'apple', label: 'Apple' },
     { value: 'banana', label: 'Banana' },
@@ -33,6 +19,7 @@ function App() {
     { value: 'grape', label: 'Grape' },
     { value: 'pear', label: 'Pear' },
   ];
+
   return (
     <div className="m-10 p-4 y-5 shadow bg-gray-100 text-gray-800 hover:shadow-md transition-all">
       <div className="badge badge-warning absolute right-0 top-0 m-4">Build Time: {BUILD_TIME}</div>
@@ -50,8 +37,16 @@ function App() {
             setV1(e);
             setJson({ ...json, v1: e });
           }}
-          items={items}
-          template={template}
+          data={items}
+          slots={{
+            item: ({ item, active, onClick }) => (
+              <button
+                className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
+                onClick={onClick}>
+                {item.label}
+              </button>
+            ),
+          }}
           className="x-4 cursor-pointer"
         />
       </div>
@@ -64,9 +59,17 @@ function App() {
             setV2(e);
             setJson({ ...json, v2: e });
           }}
-          items={items}
-          template={template}
-          className="x-4  cursor-pointer"
+          data={items}
+          slots={{
+            item: ({ item, active, onClick }) => (
+              <button
+                className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
+                onClick={onClick}>
+                {item.label}
+              </button>
+            ),
+          }}
+          className="x-4 cursor-pointer"
         />
       </div>
       <div className="y-2">
@@ -80,18 +83,19 @@ function App() {
             setJson({ ...json, v3: e });
           }}
           onError={(err) => console.log('err:', err)}
-          items={items}
-          template={({ item, options }: TemplateArgs) => {
-            const themeCls = options?.active ? 'btn-primary' : 'btn-default';
-            return (
-              <button
-                key={item.value}
-                disabled={options?.disabled}
-                className={`btn btn-sm ${themeCls}`}
-                onClick={options?.cb}>
-                {item.label}
-              </button>
-            );
+          data={items}
+          slots={{
+            item: ({ item, active, disabled, onClick }) => {
+              const themeCls = active ? 'btn-primary' : 'btn-default';
+              return (
+                <button
+                  disabled={disabled}
+                  className={`btn btn-sm ${themeCls}`}
+                  onClick={onClick}>
+                  {item.label}
+                </button>
+              );
+            },
           }}
           multiple
         />

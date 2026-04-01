@@ -1,7 +1,7 @@
 import React, { HTMLAttributes, useState, useEffect } from 'react';
 import noop from '@jswork/noop';
 import cx from 'classnames';
-import ReactList, { TemplateArgs, ReactListProps, TemplateCallback } from '@jswork/react-list';
+import { ReactList, type Slot } from '@jswork/react-list';
 import fde from 'fast-deep-equal';
 
 const CLASS_NAME = 'react-selection';
@@ -14,6 +14,15 @@ const toggle = (list: any[], value: any) => {
 
 export type StdError = { code: string };
 
+export interface SelectionItemSlotProps<T> {
+  item: T;
+  index: number;
+  data: T[];
+  active: boolean;
+  disabled: boolean;
+  onClick: () => void;
+}
+
 export type ReactSelectionProps<T extends { value: any }> = {
   /**
    * If true, the selection can be deselected.
@@ -22,14 +31,19 @@ export type ReactSelectionProps<T extends { value: any }> = {
   allowDeselect?: boolean;
   /**
    * The maximum number of selection.
-   * @default 0(unlimited)
+   * @default 1000
    */
   max?: number;
   /**
-   * The items(data) to be selected.
+   * The data items to be selected.
    * @default []
    */
-  items: T[];
+  data: T[];
+  /**
+   * Key extractor for list items. Defaults to 'value'.
+   * @default 'value'
+   */
+  keyExtractor?: keyof T | ((item: T, index: number) => string | number);
   /**
    * The value of selection.
    * @default null
@@ -51,42 +65,45 @@ export type ReactSelectionProps<T extends { value: any }> = {
    */
   multiple?: boolean;
   /**
-   * The template for rendering each item.
-   * @param args
+   * Slot configuration for rendering items and empty state.
    */
-  template?: TemplateCallback;
-  /**
-   * The extra options for template function.
-   */
-  options?: any;
-  /**
-   * The props for ReactList component.
-   * @default {}
-   */
-  listProps?: Omit<ReactListProps, 'template' | 'items' | 'options'>;
-} & HTMLAttributes<HTMLDivElement>;
+  slots: {
+    item: Slot<SelectionItemSlotProps<T>>;
+    empty?: Slot<{ data: T[] }>;
+  };
+} & Omit<HTMLAttributes<HTMLDivElement>, 'slots'>;
 
-const defaults: ReactSelectionProps<any> = {
+const defaults = {
   max: 1000,
   allowDeselect: false,
   multiple: false,
   onChange: noop,
   onError: noop,
-  items: [],
+  data: [],
+  keyExtractor: 'value' as const,
 };
+
+function renderSlot<P>(slot: Slot<P>, props: P): React.ReactNode {
+  if (typeof slot === 'function') {
+    return React.createElement(slot as any, props as any);
+  }
+  if (slot && typeof slot === 'object' && 'component' in slot) {
+    return React.createElement(slot.component as any, { ...slot.props, ...props } as any);
+  }
+  return slot;
+}
 
 const ReactSelection = <T extends { value: any }>(props: ReactSelectionProps<T>) => {
   const {
     allowDeselect = false,
     max = 1000,
-    items = [],
+    data = [],
+    keyExtractor = 'value',
     value,
     onChange = noop,
     onError = noop,
     multiple = false,
-    template,
-    options,
-    listProps,
+    slots,
     className,
     children,
     ...rest
@@ -100,25 +117,6 @@ const ReactSelection = <T extends { value: any }>(props: ReactSelectionProps<T>)
       onChange?.(value);
     }
   }, [value, onChange, stateValue]);
-
-  const handleTemplate = (args: TemplateArgs) => {
-    const { item } = args;
-    const handleSelect = multiple ? handleItemSelectMultiple : handleItemSelectSingle;
-    const active = multiple ? stateValue?.includes(item.value) : stateValue === item.value;
-    const disabled = multiple && stateValue?.length >= max && !active;
-    const cb = () => handleSelect(item);
-    const calcOpts = {
-      ...options,
-      multiple,
-      max,
-      disabled,
-      active,
-      value: stateValue,
-      cb,
-    };
-
-    return template?.({ ...args, options: calcOpts });
-  };
 
   const handleItemSelectSingle = (item: any) => {
     const itemValue = item.value;
@@ -140,11 +138,33 @@ const ReactSelection = <T extends { value: any }>(props: ReactSelectionProps<T>)
     onChange?.(calcRes);
   };
 
+  const listItemSlot = (listSlotProps: { item: T; index: number; data: T[] }) => {
+    const { item, index, data: dataList } = listSlotProps;
+    const active = multiple ? stateValue?.includes(item.value) : stateValue === item.value;
+    const disabled = multiple && stateValue?.length >= max && !active;
+    const handleSelect = multiple ? handleItemSelectMultiple : handleItemSelectSingle;
+    const onClick = () => handleSelect(item);
+
+    return renderSlot(slots.item, {
+      item,
+      index,
+      data: dataList,
+      active,
+      disabled,
+      onClick,
+    });
+  };
+
   return (
     <div data-component={CLASS_NAME} className={cx(CLASS_NAME, className)} {...rest}>
-      <ReactList items={items} template={handleTemplate} options={options} {...listProps} />
+      <ReactList
+        data={data}
+        keyExtractor={keyExtractor}
+        slots={{ item: listItemSlot, empty: slots.empty }}
+      />
     </div>
   );
 };
 
+export { Slot };
 export default ReactSelection;
