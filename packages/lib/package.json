@@ -29,7 +29,7 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "@jswork/react-list": "^2.0.0",
+    "@jswork/react-list": "^2.0.1",
     "classnames": "latest",
     "fast-deep-equal": "latest",
     "react": "^18.2.0",
@@ -54,6 +54,6 @@
     "template"
   ],
   "dependencies": {
-    "@jswork/react-list": "^2.0.0"
+    "@jswork/react-list": "^2.0.1"
   }
 }

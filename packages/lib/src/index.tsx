@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactList, type ReactListProps, type Slot } from '@jswork/react-list';
+import { ReactList, renderSlot, getKey, type KeyExtractor, type ReactListProps, type Slot } from '@jswork/react-list';
 import fde from 'fast-deep-equal';
 
 const toggle = (list: any[], value: any) => {
@@ -24,7 +24,7 @@ export interface SelectionItemSlotProps<T> {
   onClick: () => void;
 }
 
-export type ReactSelectionProps<T extends { value: any }> = Omit<ReactListProps<T>, 'slots'> & {
+export type ReactSelectionProps<T> = Omit<ReactListProps<T>, 'slots' | 'keyExtractor'> & {
   /**
    * If true, the selection can be deselected.
    * @default false
@@ -40,6 +40,11 @@ export type ReactSelectionProps<T extends { value: any }> = Omit<ReactListProps<
    * @default null
    */
   value?: any;
+  /**
+   * Extract the value from an item. Uses the same signature as KeyExtractor.
+   * @default 'value'
+   */
+  valueExtractor?: KeyExtractor<T>;
   /**
    * The change handler.
    */
@@ -62,25 +67,7 @@ export type ReactSelectionProps<T extends { value: any }> = Omit<ReactListProps<
   };
 };
 
-const defaults = {
-  max: 1000,
-  allowDeselect: false,
-  multiple: false,
-  keyExtractor: 'value' as const,
-};
-
-function renderSlot<P>(slot: Slot<P>, props: P, key?: string | number): React.ReactNode {
-  if (typeof slot === 'function') {
-    return React.createElement(slot as any, key ? { key, ...props } : (props as any));
-  }
-  if (slot && typeof slot === 'object' && 'component' in slot) {
-    return React.createElement(slot.component as any, { key, ...slot.props, ...props } as any);
-  }
-  if (key !== undefined) return <React.Fragment key={key}>{slot}</React.Fragment>;
-  return slot;
-}
-
-export const ReactSelection = <T extends { value: any }>(props: ReactSelectionProps<T>) => {
+export const ReactSelection = <T,>(props: ReactSelectionProps<T>) => {
   const {
     allowDeselect = false,
     max = 1000,
@@ -88,9 +75,10 @@ export const ReactSelection = <T extends { value: any }>(props: ReactSelectionPr
     onChange,
     onError,
     multiple = false,
+    valueExtractor = 'value' as KeyExtractor<T>,
     slots,
     ...listRest
-  } = { ...defaults, ...props };
+  } = props;
   const [stateValue, setStateValue] = useState(value || (multiple ? [] : null));
 
   useEffect(() => {
@@ -101,16 +89,16 @@ export const ReactSelection = <T extends { value: any }>(props: ReactSelectionPr
     }
   }, [value, onChange, stateValue]);
 
-  const handleItemSelectSingle = useCallback((item: any) => {
-    const itemValue = item.value;
+  const handleItemSelectSingle = useCallback((item: T) => {
+    const itemValue = getKey(item, 0, valueExtractor);
     const isChecked = itemValue === stateValue;
     const newValue = allowDeselect && isChecked ? null : itemValue;
     setStateValue(newValue);
     if (stateValue !== newValue) onChange?.(newValue);
-  }, [stateValue, allowDeselect, onChange]);
+  }, [stateValue, allowDeselect, valueExtractor, onChange]);
 
-  const handleItemSelectMultiple = useCallback((item: any) => {
-    const newValue = toggle([...stateValue], item.value);
+  const handleItemSelectMultiple = useCallback((item: T) => {
+    const newValue = toggle([...stateValue], getKey(item, 0, valueExtractor));
     const calcRes = max > 0 ? newValue.slice(0, max) : newValue;
     const hasExceed = newValue.length > max;
     if (hasExceed) {
@@ -119,16 +107,16 @@ export const ReactSelection = <T extends { value: any }>(props: ReactSelectionPr
     }
     setStateValue(calcRes);
     onChange?.(calcRes);
-  }, [stateValue, max, onError, onChange]);
+  }, [stateValue, max, valueExtractor, onError, onChange]);
 
   const handleSelect = multiple ? handleItemSelectMultiple : handleItemSelectSingle;
 
   const listItemSlot = useCallback((listSlotProps: { item: T; index: number; data: T[] }) => {
     const { item, index, data: dataList } = listSlotProps;
-    const active = multiple ? stateValue?.includes(item.value) : stateValue === item.value;
+    const itemValue = getKey(item, index, valueExtractor);
+    const active = multiple ? stateValue?.includes(itemValue) : stateValue === itemValue;
     const disabled = multiple && stateValue?.length >= max && !active;
     const onClick = () => handleSelect(item);
-    const key = (item as any).value ?? index;
 
     return renderSlot(slots.item, {
       item,
@@ -137,11 +125,12 @@ export const ReactSelection = <T extends { value: any }>(props: ReactSelectionPr
       active,
       disabled,
       onClick,
-    }, key);
-  }, [stateValue, multiple, max, handleSelect, slots.item]);
+    });
+  }, [stateValue, multiple, max, valueExtractor, handleSelect, slots.item]);
 
   return (
     <ReactList
+      keyExtractor={valueExtractor}
       {...listRest}
       slots={{ item: listItemSlot, empty: slots.empty }}
     />

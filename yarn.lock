@@ -578,10 +578,10 @@
     "@jswork/tailwind-shortcuts" "^1.0.22"
     "@jswork/tailwind-width" "^1.0.6"
 
-"@jswork/react-list@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/@jswork/react-list/-/react-list-2.0.0.tgz#24aedde9f4638721ac2f114607b9de3e049caf77"
-  integrity sha512-nMSFQhlb4c80PbXMqDpFdRiK1fIOLynFKSCRjCYsODlYtHjXq5b/A+mCL76jJm8zyLdw2mkXZoPQ5GSIUEtaRg==
+"@jswork/react-list@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/@jswork/react-list/-/react-list-2.0.1.tgz#7e579bbfd18ed0467f0418f9045213110945b9b1"
+  integrity sha512-zSs1bq8VnGHhoVEEnvHUSA2AgNIHmaDi+lpP31AX/TJWRpASLxh4QvxD+qDQj5q4XOPzUFIitZ33fO+B7fnL9A==
   dependencies:
     "@jswork/class-imperative-handle" "^1.0.1"
     "@jswork/noop" "^1.0.0"

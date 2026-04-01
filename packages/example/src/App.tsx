@@ -1,24 +1,16 @@
-import ReactSelection from '@jswork/react-selection/src';
 import './index.css';
 import { useState } from 'react';
+import SingleSelection from './demos/single-selection';
+import AllowDeselect from './demos/allow-deselect';
+import MultipleSelection from './demos/multiple-selection';
+import ValueExtractor from './demos/value-extractor';
 
 function App() {
   const [v1, setV1] = useState('apple');
-  const [v2, setV2] = useState('grape');
+  const [v2, setV2] = useState<string | null>('grape');
   const [v3, setV3] = useState(['banana', 'orange']);
-  const [json, setJson] = useState({
-    v1: 'apple',
-    v2: 'grape',
-    v3: ['banana', 'orange'],
-  });
-
-  const items = [
-    { value: 'apple', label: 'Apple' },
-    { value: 'banana', label: 'Banana' },
-    { value: 'orange', label: 'Orange' },
-    { value: 'grape', label: 'Grape' },
-    { value: 'pear', label: 'Pear' },
-  ];
+  const [v4, setV4] = useState<number | null>(1);
+  const json = { v1, v2, v3, v4 };
 
   return (
     <div className="m-10 p-4 y-5 shadow bg-gray-100 text-gray-800 hover:shadow-md transition-all">
@@ -32,76 +24,25 @@ function App() {
       <div className="y-2">
         <h3>Single Selection(v1)</h3>
         <div className="x-3">
-          <ReactSelection
-            value={v1}
-            onChange={(e) => {
-              setV1(e);
-              setJson({ ...json, v1: e });
-            }}
-            data={items}
-            slots={{
-              item: ({ item, active, onClick }) => (
-                <button
-                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
-                  onClick={onClick}>
-                  {item.label}
-                </button>
-              ),
-            }}
-          />
+          <SingleSelection value={v1} onChange={setV1} />
         </div>
       </div>
       <div className="y-2">
         <h3>Single Selection + allowDeselect(v2)</h3>
         <div className="x-3">
-          <ReactSelection
-            allowDeselect
-            value={v2}
-            onChange={(e) => {
-              setV2(e);
-              setJson({ ...json, v2: e });
-            }}
-            data={items}
-            slots={{
-              item: ({ item, active, onClick }) => (
-                <button
-                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-default'}`}
-                  onClick={onClick}>
-                  {item.label}
-                </button>
-              ),
-            }}
-          />
+          <AllowDeselect value={v2} onChange={setV2} />
         </div>
       </div>
       <div className="y-2">
         <h3>Multiple Selection(v3, max:3)</h3>
         <div className="x-3">
-          <ReactSelection
-            className="x-4"
-            value={v3}
-            max={3}
-            onChange={(e) => {
-              setV3(e);
-              setJson({ ...json, v3: e });
-            }}
-            onError={(err) => console.log('err:', err)}
-            data={items}
-            slots={{
-              item: ({ item, active, disabled, onClick }) => {
-                const themeCls = active ? 'btn-primary' : 'btn-default';
-                return (
-                  <button
-                    disabled={disabled}
-                    className={`btn btn-sm ${themeCls}`}
-                    onClick={onClick}>
-                    {item.label}
-                  </button>
-                );
-              },
-            }}
-            multiple
-          />
+          <MultipleSelection value={v3} onChange={setV3} />
+        </div>
+      </div>
+      <div className="y-2">
+        <h3>valueExtractor(v4)</h3>
+        <div className="x-3">
+          <ValueExtractor value={v4} onChange={setV4} />
         </div>
       </div>
     </div>
